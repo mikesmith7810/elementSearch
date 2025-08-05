@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class KotlinBackendInterviewApplication
+class CarsApplication
 
 fun main(args: Array<String>) {
-	runApplication<KotlinBackendInterviewApplication>(*args)
+	runApplication<CarsApplication>(*args)
 }
