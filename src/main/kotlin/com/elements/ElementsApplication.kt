@@ -1,11 +1,11 @@
-package com.cars
+package com.elements
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class CarsApplication
+class ElementsApplication
 
 fun main(args: Array<String>) {
-	runApplication<CarsApplication>(*args)
+    runApplication<ElementsApplication>(*args)
 }

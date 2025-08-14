@@ -1,6 +1,6 @@
-package com.cars.data
+package com.elements.data
 
-data class Car(
+data class Element(
     val make: String,
     val model: String,
     val cc: String,
