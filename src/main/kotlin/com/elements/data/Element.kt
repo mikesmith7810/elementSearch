@@ -1,14 +1,13 @@
 package com.elements.data
 
 data class Element(
-    val make: String,
-    val model: String,
-    val cc: String,
-    val horsePower: String,
-    val topSpeed: String,
-    val performance: String,
-    val price: String,
-    val fuel: String,
-    val seats: String,
-    val torque: String
+    val name: String,
+    val symbol: String,
+    val atomicNumber: String,
+    val atomicWeight: String,
+    val density: String,
+    val meltingPoint: String,
+    val boilingPoint: String,
+    val absoluteMeltingPoint: String,
+    val absoluteBoilingPoint: String
 )
