@@ -2,7 +2,7 @@ package com.elements.sort
 
 data class Sort(
     val sortField: SortField,
-    val sortOrder: SortOrder
+    val sortOrder: Boolean
 ) {
     companion object {
         fun fromString(sort: String): Sort {
@@ -12,7 +12,7 @@ data class Sort(
             }
             return Sort(
                 sortField = SortField.fromString(parts[0]),
-                sortOrder = SortOrder.fromString(parts[1])
+                sortOrder = parts[1].equals("asc", ignoreCase = true)
             )
         }
     }

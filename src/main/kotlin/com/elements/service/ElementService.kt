@@ -20,11 +20,23 @@ class ElementService(private val dataLoader: DataLoader) {
             elementSearchRequest.phase == Phase.UNKNOWN || element.phase == elementSearchRequest.phase
         }
 
+        val comparator = elementSearchRequest.sort
+            ?.map { sort ->
+                when (sort.sortField.name.lowercase()) {
+                    "name" -> if (sort.sortOrder) compareBy { it.name } else compareByDescending { it.name }
+                    "density" -> if (sort.sortOrder) compareBy { it.density.toDoubleOrNull() } else compareByDescending { it.density.toDoubleOrNull() }
+                    else -> compareBy<Element> { it.name }
+                }
+            }
+            ?.reduce { acc, comp -> acc.then(comp) }
+            ?: compareBy<Element> { it.name }
+
         return dataLoader.getElements()
             .also { elements -> println("Stored elements : ${elements.size}") }
             .filter(minDensityFilter)
             .filter(maxDensityFilter)
             .filter(phaseFilter)
+            .sortedWith(comparator)
             .take(elementSearchRequest.limit ?: Int.MAX_VALUE)
             .also { elements -> println("Filtered elements : ${elements.size}") }
             .toList()

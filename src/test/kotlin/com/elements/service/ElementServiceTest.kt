@@ -6,7 +6,6 @@ import com.elements.model.ElementSearchRequest
 import com.elements.model.Phase
 import com.elements.sort.Sort
 import com.elements.sort.SortField
-import com.elements.sort.SortOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -18,8 +17,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
-private const val GAS = "gas"
-private const val NAME_ASC = "name_asc"
 private const val MIN_DENSITY = 0.01
 private const val MAX_DENSITY = 0.9
 private const val LIMIT = 10
@@ -57,7 +54,7 @@ class ElementServiceTest {
                 minDensity = MIN_DENSITY,
                 maxDensity = MAX_DENSITY,
                 phase = Phase.GAS,
-                sort = listOf(Sort(SortField.NAME, SortOrder.ASC)),
+                sort = listOf(Sort(SortField.NAME, true)),
                 limit = LIMIT
             )
         )
