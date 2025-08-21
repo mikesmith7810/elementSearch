@@ -1,7 +1,7 @@
 package com.elements.controller
 
-import com.elements.data.Element
 import com.elements.factory.ElementSearchFactory
+import com.elements.model.Element
 import com.elements.service.ElementService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam

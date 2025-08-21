@@ -1,8 +1,8 @@
 package com.elements.controller
 
-import com.elements.data.ElementSearchRequest
-import com.elements.data.Phase
 import com.elements.factory.ElementSearchFactory
+import com.elements.model.ElementSearchRequest
+import com.elements.model.Phase
 import com.elements.service.ElementService
 import io.mockk.every
 import io.mockk.mockk
@@ -13,6 +13,7 @@ private const val GAS = "gas"
 private const val NAME_ASC = "name_asc"
 private const val MIN_DENSITY = 0.01
 private const val MAX_DENSITY = 0.9
+private const val LIMIT = 10
 
 class ElementControllerTest {
     private val elementService = mockk<ElementService>()
@@ -30,14 +31,14 @@ class ElementControllerTest {
                 maxDensity = MAX_DENSITY,
                 phase = GAS,
                 sort = listOf(NAME_ASC),
-                limit = 10
+                limit = LIMIT
             )
         } returns ElementSearchRequest(
             minDensity = MIN_DENSITY,
             maxDensity = MAX_DENSITY,
             phase = Phase.GAS,
             sort = listOf(NAME_ASC),
-            limit = 10
+            limit = LIMIT
         )
 
         every {
@@ -47,7 +48,7 @@ class ElementControllerTest {
                     maxDensity = MAX_DENSITY,
                     phase = Phase.GAS,
                     sort = listOf(NAME_ASC),
-                    limit = 10
+                    limit = LIMIT
                 )
             )
         } returns listOf()
@@ -58,7 +59,7 @@ class ElementControllerTest {
             maxDensity = MAX_DENSITY,
             phase = GAS,
             sort = listOf(NAME_ASC),
-            limit = 10
+            limit = LIMIT
         )
 
         verify(exactly = 1) {
@@ -67,7 +68,7 @@ class ElementControllerTest {
                 maxDensity = MAX_DENSITY,
                 phase = GAS,
                 sort = listOf(NAME_ASC),
-                limit = 10
+                limit = LIMIT
             )
         }
 
@@ -78,7 +79,7 @@ class ElementControllerTest {
                     maxDensity = MAX_DENSITY,
                     phase = Phase.GAS,
                     sort = listOf(NAME_ASC),
-                    limit = 10
+                    limit = LIMIT
                 )
             )
         }

@@ -1,7 +1,7 @@
 package com.elements.factory
 
-import com.elements.data.ElementSearchRequest;
-import com.elements.data.Phase
+import com.elements.model.ElementSearchRequest;
+import com.elements.model.Phase
 import org.springframework.stereotype.Component
 
 @Component

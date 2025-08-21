@@ -1,4 +1,4 @@
-package com.elements.data
+package com.elements.model
 
 enum class Phase {
     GAS, SOLID, LIQUID, UNKNOWN;

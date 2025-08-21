@@ -22,3 +22,11 @@ The application runs with Java 21.
 `./gradlew clean build`
 
 `./gradlew bootRun`
+
+# List of things to look at
+
+- ControllerAdvice
+- Parsing Quotes from CVS
+- Sorting
+- Caching
+- 

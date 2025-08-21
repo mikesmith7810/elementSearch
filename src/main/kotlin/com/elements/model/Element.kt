@@ -1,4 +1,4 @@
-package com.elements.data
+package com.elements.model
 
 data class Element(
     val name: String,
@@ -8,6 +8,7 @@ data class Element(
     val density: String,
     val meltingPoint: String,
     val boilingPoint: String,
+    val phase: Phase,
     val absoluteMeltingPoint: String,
     val absoluteBoilingPoint: String
 )

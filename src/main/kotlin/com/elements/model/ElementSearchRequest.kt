@@ -1,4 +1,4 @@
-package com.elements.data
+package com.elements.model
 
 data class ElementSearchRequest(
     val minDensity: Double?,
