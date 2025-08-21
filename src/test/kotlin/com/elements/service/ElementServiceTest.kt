@@ -4,6 +4,9 @@ import com.elements.data.DataLoader
 import com.elements.model.Element
 import com.elements.model.ElementSearchRequest
 import com.elements.model.Phase
+import com.elements.sort.Sort
+import com.elements.sort.SortField
+import com.elements.sort.SortOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -54,7 +57,7 @@ class ElementServiceTest {
                 minDensity = MIN_DENSITY,
                 maxDensity = MAX_DENSITY,
                 phase = Phase.GAS,
-                sort = listOf(NAME_ASC),
+                sort = listOf(Sort(SortField.NAME, SortOrder.ASC)),
                 limit = LIMIT
             )
         )

@@ -4,6 +4,7 @@ import com.elements.factory.ElementSearchFactory
 import com.elements.model.ElementSearchRequest
 import com.elements.model.Phase
 import com.elements.service.ElementService
+import com.elements.sort.Sort
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -35,13 +36,13 @@ class ElementControllerTest {
         limit: Int?
     ) {
 
-        println("Test args: minDensity=$minDensity, maxDensity=$maxDensity, phase=$phase, sort=$sort, limit=$limit")
-        
+        val sortList: List<Sort>? = sort?.map { Sort.fromString(it) }
+
         val elementSearchRequest = ElementSearchRequest(
             minDensity = minDensity,
             maxDensity = maxDensity,
             phase = Phase.fromString(phase),
-            sort = sort,
+            sort = sortList,
             limit = limit
 
         )

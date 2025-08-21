@@ -2,6 +2,7 @@ package com.elements.factory
 
 import com.elements.model.ElementSearchRequest;
 import com.elements.model.Phase
+import com.elements.sort.Sort
 import org.springframework.stereotype.Component
 
 @Component
@@ -38,7 +39,11 @@ class ElementSearchFactory {
         return limit;
     }
 
-    private fun parseSort(sort: List<String>?): List<String>? {
-        return sort;
+    private fun parseSort(sort: List<String>?): List<Sort>? {
+        return sort
+            ?.map { it.lowercase() }
+            ?.filter { it == "name_asc" || it == "name_desc" || it == "density_asc" || it == "density_desc" }
+            ?.distinct()
+            ?.map { Sort.fromString(it) }
     }
 }
