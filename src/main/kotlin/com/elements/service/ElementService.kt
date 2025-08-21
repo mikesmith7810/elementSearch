@@ -6,6 +6,9 @@ import com.elements.model.ElementSearchRequest
 import com.elements.model.Phase
 import org.springframework.stereotype.Service
 
+private const val NAME = "name"
+private const val DENSITY = "density"
+
 @Service
 class ElementService(private val dataLoader: DataLoader) {
     fun searchElements(elementSearchRequest: ElementSearchRequest): List<Element> {
@@ -20,26 +23,35 @@ class ElementService(private val dataLoader: DataLoader) {
             elementSearchRequest.phase == Phase.UNKNOWN || element.phase == elementSearchRequest.phase
         }
 
-        val comparator = elementSearchRequest.sort
-            ?.map { sort ->
-                when (sort.sortField.name.lowercase()) {
-                    "name" -> if (sort.sortOrder) compareBy { it.name } else compareByDescending { it.name }
-                    "density" -> if (sort.sortOrder) compareBy { it.density.toDoubleOrNull() } else compareByDescending { it.density.toDoubleOrNull() }
-                    else -> compareBy<Element> { it.name }
-                }
-            }
-            ?.reduce { acc, comp -> acc.then(comp) }
-            ?: compareBy<Element> { it.name }
-
         return dataLoader.getElements()
             .also { elements -> println("Stored elements : ${elements.size}") }
+            .asSequence()
             .filter(minDensityFilter)
             .filter(maxDensityFilter)
             .filter(phaseFilter)
-            .sortedWith(comparator)
+            .sortedWith(getElementComparator(elementSearchRequest))
             .take(elementSearchRequest.limit ?: Int.MAX_VALUE)
+            .toList()
             .also { elements -> println("Filtered elements : ${elements.size}") }
             .toList()
+    }
+
+    private fun getElementComparator(elementSearchRequest: ElementSearchRequest): Comparator<Element> {
+        val elementComparator = elementSearchRequest.sort
+            ?.map { sort ->
+                when (sort.sortField.name.lowercase()) {
+                    NAME -> if (sort.sortOrder) compareBy { sortField -> sortField.name }
+                    else compareByDescending { sortField -> sortField.name }
+
+                    DENSITY -> if (sort.sortOrder) compareBy { sortField -> sortField.density.toDoubleOrNull() }
+                    else compareByDescending { sortField -> sortField.density.toDoubleOrNull() }
+
+                    else -> compareBy<Element> { sortField -> sortField.name }
+                }
+            }
+            ?.reduce { accumulator, comparator -> accumulator.then(comparator) }
+            ?: compareBy { sortField -> sortField.name }
+        return elementComparator
     }
 }
 

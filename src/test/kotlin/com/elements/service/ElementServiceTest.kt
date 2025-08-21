@@ -6,12 +6,16 @@ import com.elements.model.ElementSearchRequest
 import com.elements.model.Phase
 import com.elements.sort.Sort
 import com.elements.sort.SortField
+import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -21,10 +25,16 @@ private const val MIN_DENSITY = 0.01
 private const val MAX_DENSITY = 0.9
 private const val LIMIT = 10
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ElementServiceTest {
     private val dataLoader = mockk<DataLoader>()
 
     private val elementService = ElementService(dataLoader)
+
+    @BeforeEach
+    fun setUp() {
+        clearMocks(dataLoader)
+    }
 
     @Test
     fun `should load elements from dataloader`() {
@@ -65,6 +75,65 @@ class ElementServiceTest {
 
         elements shouldHaveSize 1
         elements shouldBe storedElements
+    }
+
+    @ParameterizedTest
+    @MethodSource("providesSortedSearches")
+    fun `should sort elements based on search params`(
+        elementSearchRequest: ElementSearchRequest,
+        numberOfResults: Int,
+        expectedElements: List<Element>
+    ) {
+        val storedElements = listOf(
+            Element(
+                name = "Hydrogen",
+                symbol = "H",
+                atomicNumber = "1",
+                atomicWeight = "1.008",
+                density = "0.08988",
+                meltingPoint = "-259.16",
+                boilingPoint = "-252.87",
+                phase = Phase.GAS,
+                absoluteMeltingPoint = "13.99",
+                absoluteBoilingPoint = "20.28"
+            ),
+            Element(
+                name = "Carbon",
+                symbol = "C",
+                atomicNumber = "5",
+                atomicWeight = "4.008",
+                density = "6.08988",
+                meltingPoint = "-459.16",
+                boilingPoint = "-252.87",
+                phase = Phase.GAS,
+                absoluteMeltingPoint = "11.99",
+                absoluteBoilingPoint = "25.28"
+            ),
+            Element(
+                name = "Krypton",
+                symbol = "K",
+                atomicNumber = "23",
+                atomicWeight = "4.008",
+                density = "2.08988",
+                meltingPoint = "-269.16",
+                boilingPoint = "-152.87",
+                phase = Phase.SOLID,
+                absoluteMeltingPoint = "16.99",
+                absoluteBoilingPoint = "29.28"
+            )
+        )
+        every {
+            dataLoader.getElements()
+        } returns storedElements
+
+        val elements = elementService.searchElements(
+            elementSearchRequest
+        )
+
+        elements shouldHaveSize numberOfResults
+
+        elements shouldContainInOrder expectedElements
+
     }
 
     @ParameterizedTest
@@ -122,56 +191,248 @@ class ElementServiceTest {
         elements shouldHaveSize numberOfResults
     }
 
-    companion object {
-        @JvmStatic
-        fun providesFilteredSearches(): Stream<Arguments> {
-            return Stream.of(
-                Arguments.of(
-                    ElementSearchRequest(
-                        minDensity = null,
-                        maxDensity = null,
-                        phase = Phase.UNKNOWN,
-                        sort = null,
-                        limit = null
-                    ), 3
-                ),
-                Arguments.of(
-                    ElementSearchRequest(
-                        minDensity = 5.0,
-                        maxDensity = null,
-                        phase = Phase.UNKNOWN,
-                        sort = null,
-                        limit = null
-                    ), 1
-                ),
-                Arguments.of(
-                    ElementSearchRequest(
-                        minDensity = 1.0,
-                        maxDensity = 8.0,
-                        phase = Phase.UNKNOWN,
-                        sort = null,
-                        limit = null
-                    ), 2
-                ),
-                Arguments.of(
-                    ElementSearchRequest(
-                        minDensity = null,
-                        maxDensity = null,
+
+    private fun providesFilteredSearches(): Stream<Arguments> {
+        return Stream.of(
+            Arguments.of(
+                ElementSearchRequest(
+                    minDensity = null,
+                    maxDensity = null,
+                    phase = Phase.UNKNOWN,
+                    sort = null,
+                    limit = null
+                ), 3
+            ),
+            Arguments.of(
+                ElementSearchRequest(
+                    minDensity = 5.0,
+                    maxDensity = null,
+                    phase = Phase.UNKNOWN,
+                    sort = null,
+                    limit = null
+                ), 1
+            ),
+            Arguments.of(
+                ElementSearchRequest(
+                    minDensity = 1.0,
+                    maxDensity = 8.0,
+                    phase = Phase.UNKNOWN,
+                    sort = null,
+                    limit = null
+                ), 2
+            ),
+            Arguments.of(
+                ElementSearchRequest(
+                    minDensity = null,
+                    maxDensity = null,
+                    phase = Phase.GAS,
+                    sort = null,
+                    limit = null
+                ), 2
+            ),
+            Arguments.of(
+                ElementSearchRequest(
+                    minDensity = null,
+                    maxDensity = null,
+                    phase = Phase.UNKNOWN,
+                    sort = null,
+                    limit = 1
+                ), 1
+            )
+        )
+    }
+
+    private fun providesSortedSearches(): Stream<Arguments> {
+        return Stream.of(
+            Arguments.of(
+                ElementSearchRequest(
+                    minDensity = null,
+                    maxDensity = null,
+                    phase = Phase.UNKNOWN,
+                    sort = listOf(Sort(SortField.NAME, true)),
+                    limit = null
+                ), 3,
+                listOf(
+                    Element(
+                        name = "Carbon",
+                        symbol = "C",
+                        atomicNumber = "5",
+                        atomicWeight = "4.008",
+                        density = "6.08988",
+                        meltingPoint = "-459.16",
+                        boilingPoint = "-252.87",
                         phase = Phase.GAS,
-                        sort = null,
-                        limit = null
-                    ), 2
-                ),
-                Arguments.of(
-                    ElementSearchRequest(
-                        minDensity = null,
-                        maxDensity = null,
-                        phase = Phase.UNKNOWN,
-                        sort = null,
-                        limit = 1
-                    ), 1
+                        absoluteMeltingPoint = "11.99",
+                        absoluteBoilingPoint = "25.28"
+                    ),
+                    Element(
+                        name = "Hydrogen",
+                        symbol = "H",
+                        atomicNumber = "1",
+                        atomicWeight = "1.008",
+                        density = "0.08988",
+                        meltingPoint = "-259.16",
+                        boilingPoint = "-252.87",
+                        phase = Phase.GAS,
+                        absoluteMeltingPoint = "13.99",
+                        absoluteBoilingPoint = "20.28"
+                    ),
+                    Element(
+                        name = "Krypton",
+                        symbol = "K",
+                        atomicNumber = "23",
+                        atomicWeight = "4.008",
+                        density = "2.08988",
+                        meltingPoint = "-269.16",
+                        boilingPoint = "-152.87",
+                        phase = Phase.SOLID,
+                        absoluteMeltingPoint = "16.99",
+                        absoluteBoilingPoint = "29.28"
+                    )
+                )
+            ),
+            Arguments.of(
+                ElementSearchRequest(
+                    minDensity = null,
+                    maxDensity = null,
+                    phase = Phase.UNKNOWN,
+                    sort = listOf(Sort(SortField.NAME, false)),
+                    limit = null
+                ), 3,
+                listOf(
+                    Element(
+                        name = "Krypton",
+                        symbol = "K",
+                        atomicNumber = "23",
+                        atomicWeight = "4.008",
+                        density = "2.08988",
+                        meltingPoint = "-269.16",
+                        boilingPoint = "-152.87",
+                        phase = Phase.SOLID,
+                        absoluteMeltingPoint = "16.99",
+                        absoluteBoilingPoint = "29.28"
+                    ),
+                    Element(
+                        name = "Hydrogen",
+                        symbol = "H",
+                        atomicNumber = "1",
+                        atomicWeight = "1.008",
+                        density = "0.08988",
+                        meltingPoint = "-259.16",
+                        boilingPoint = "-252.87",
+                        phase = Phase.GAS,
+                        absoluteMeltingPoint = "13.99",
+                        absoluteBoilingPoint = "20.28"
+                    ),
+                    Element(
+                        name = "Carbon",
+                        symbol = "C",
+                        atomicNumber = "5",
+                        atomicWeight = "4.008",
+                        density = "6.08988",
+                        meltingPoint = "-459.16",
+                        boilingPoint = "-252.87",
+                        phase = Phase.GAS,
+                        absoluteMeltingPoint = "11.99",
+                        absoluteBoilingPoint = "25.28"
+                    )
+                )
+            ),
+            Arguments.of(
+                ElementSearchRequest(
+                    minDensity = null,
+                    maxDensity = null,
+                    phase = Phase.UNKNOWN,
+                    sort = listOf(Sort(SortField.DENSITY, true)),
+                    limit = null
+                ), 3,
+                listOf(
+                    Element(
+                        name = "Hydrogen",
+                        symbol = "H",
+                        atomicNumber = "1",
+                        atomicWeight = "1.008",
+                        density = "0.08988",
+                        meltingPoint = "-259.16",
+                        boilingPoint = "-252.87",
+                        phase = Phase.GAS,
+                        absoluteMeltingPoint = "13.99",
+                        absoluteBoilingPoint = "20.28"
+                    ),
+                    Element(
+                        name = "Krypton",
+                        symbol = "K",
+                        atomicNumber = "23",
+                        atomicWeight = "4.008",
+                        density = "2.08988",
+                        meltingPoint = "-269.16",
+                        boilingPoint = "-152.87",
+                        phase = Phase.SOLID,
+                        absoluteMeltingPoint = "16.99",
+                        absoluteBoilingPoint = "29.28"
+                    ),
+                    Element(
+                        name = "Carbon",
+                        symbol = "C",
+                        atomicNumber = "5",
+                        atomicWeight = "4.008",
+                        density = "6.08988",
+                        meltingPoint = "-459.16",
+                        boilingPoint = "-252.87",
+                        phase = Phase.GAS,
+                        absoluteMeltingPoint = "11.99",
+                        absoluteBoilingPoint = "25.28"
+                    )
+                )
+            ),
+            Arguments.of(
+                ElementSearchRequest(
+                    minDensity = null,
+                    maxDensity = null,
+                    phase = Phase.UNKNOWN,
+                    sort = listOf(Sort(SortField.DENSITY, false)),
+                    limit = null
+                ), 3,
+                listOf(
+                    Element(
+                        name = "Carbon",
+                        symbol = "C",
+                        atomicNumber = "5",
+                        atomicWeight = "4.008",
+                        density = "6.08988",
+                        meltingPoint = "-459.16",
+                        boilingPoint = "-252.87",
+                        phase = Phase.GAS,
+                        absoluteMeltingPoint = "11.99",
+                        absoluteBoilingPoint = "25.28"
+                    ),
+                    Element(
+                        name = "Krypton",
+                        symbol = "K",
+                        atomicNumber = "23",
+                        atomicWeight = "4.008",
+                        density = "2.08988",
+                        meltingPoint = "-269.16",
+                        boilingPoint = "-152.87",
+                        phase = Phase.SOLID,
+                        absoluteMeltingPoint = "16.99",
+                        absoluteBoilingPoint = "29.28"
+                    ),
+                    Element(
+                        name = "Hydrogen",
+                        symbol = "H",
+                        atomicNumber = "1",
+                        atomicWeight = "1.008",
+                        density = "0.08988",
+                        meltingPoint = "-259.16",
+                        boilingPoint = "-252.87",
+                        phase = Phase.GAS,
+                        absoluteMeltingPoint = "13.99",
+                        absoluteBoilingPoint = "20.28"
+                    )
                 )
             )
-        }
+        )
     }
+
 }
