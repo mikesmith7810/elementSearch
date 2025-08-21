@@ -8,12 +8,22 @@ and is available under the [CCO: Public Domain](https://creativecommons.org/publ
 
 ## Querying the data
 
+The endpoint is -
+
+`http://localhost:8080/getElements`
+
 A number of query parameters are available to customize the search criteria. All query parameters are optional and
 may be applied in any order. The full list of query parameters is:
 
-**TBC**
+**Parameter Examples**
 
-* `TBC=Low|Medium|High` - Filter by TBC. When this parameter is omitted, all entries are returned.
+* minDensity - 1.5
+* maxDensity - 2.5
+* phase solid | gas | liquid
+* sort - name_asc | name_desc | density_asc | density_desc
+* limit - 10
+
+`http://localhost:8080/getElements?minDensity=1.5&maxDensity=2.5&phase=solid&sort=name_asc&limit=10`
 
 # Building and Running
 
