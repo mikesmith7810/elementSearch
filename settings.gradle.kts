@@ -1,1 +1,1 @@
-rootProject.name = "kotlin-backend-interview"
+rootProject.name = "elementSearch"
