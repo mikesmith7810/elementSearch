@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class ElementsApplication
+class ElementSearchApplication
 
 fun main(args: Array<String>) {
-    runApplication<ElementsApplication>(*args)
+    runApplication<ElementSearchApplication>(*args)
 }
