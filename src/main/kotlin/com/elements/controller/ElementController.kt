@@ -15,11 +15,11 @@ class ElementController(
 
     @GetMapping("/getElements")
     fun getElements(
-        @RequestParam(name = "minDensity", required = false) minDensity: Double? = null,
-        @RequestParam(name = "maxDensity", required = false) maxDensity: Double? = null,
-        @RequestParam(name = "phase", required = false) phase: String? = null,
-        @RequestParam(name = "sort", required = false) sort: List<String>? = null,
-        @RequestParam(name = "limit", required = false) limit: Int? = null
+        @RequestParam(name = "minDensity", required = false) minDensity: Double?,
+        @RequestParam(name = "maxDensity", required = false) maxDensity: Double?,
+        @RequestParam(name = "phase", required = false) phase: String?,
+        @RequestParam(name = "sort", required = false) sort: List<String>?,
+        @RequestParam(name = "limit", required = false) limit: Int?
     ): List<Element> {
         val elementSearchRequest = elementSearchFactory.createElementSearchRequestFrom(
             minDensity = minDensity,
