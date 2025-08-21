@@ -35,8 +35,8 @@ The application runs with Java 21.
 
 # List of things to look at
 
-- ControllerAdvice
-- Parsing Quotes from CVS
-- Sorting
-- Caching
-- 
+- Exceptions and ControllerAdvice
+- Validation
+- Logging
+- Interfaces
+
