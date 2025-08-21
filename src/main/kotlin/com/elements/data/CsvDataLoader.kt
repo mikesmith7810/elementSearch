@@ -4,12 +4,21 @@ import com.elements.model.Element
 import com.elements.model.Phase
 
 class CsvDataLoader(private val dataFile: String) : DataLoader {
+    private var storedElements: List<Element> = emptyList()
+
+    override fun getElements(): List<Element> {
+
+        if (storedElements.isNotEmpty()) {
+            return storedElements
+        }
+        return loadElements()
+    }
 
     override fun loadElements(): List<Element> {
         val inputStream = javaClass.getResourceAsStream(dataFile)
         val lines = inputStream?.bufferedReader()?.readLines() ?: emptyList()
 
-        val elements = lines.stream()
+        storedElements = lines.stream()
             .skip(1)
             .map { line ->
                 val parts = line.split(",")
@@ -28,6 +37,6 @@ class CsvDataLoader(private val dataFile: String) : DataLoader {
             }
             .toList()
 
-        return elements
+        return storedElements
     }
 }

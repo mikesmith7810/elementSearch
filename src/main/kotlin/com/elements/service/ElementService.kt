@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service
 @Service
 class ElementService(private val dataLoader: DataLoader) {
     fun searchElements(elementSearchRequest: ElementSearchRequest): List<Element> {
-        return dataLoader.loadElements().toList()
+        return dataLoader.getElements().toList()
     }
 }

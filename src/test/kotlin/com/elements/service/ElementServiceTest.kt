@@ -41,7 +41,7 @@ class ElementServiceTest {
         )
 
         every {
-            dataLoader.loadElements()
+            dataLoader.getElements()
         } returns storedElements
 
 
@@ -56,7 +56,7 @@ class ElementServiceTest {
         )
 
         verify(exactly = 1) {
-            dataLoader.loadElements()
+            dataLoader.getElements()
         }
 
         elements shouldHaveSize 1
