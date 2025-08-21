@@ -39,4 +39,5 @@ The application runs with Java 21.
 - Validation
 - Logging
 - Interfaces
-
+- Extract data creation from tests into own class
+- Add integration tests
