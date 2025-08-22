@@ -40,10 +40,11 @@ class ElementSearchFactory {
     }
 
     private fun parseSort(sort: List<String>?): List<Sort>? {
+        val validSorts = setOf("name_asc", "name_desc", "density_asc", "density_desc")
         return sort
             ?.map { it.lowercase() }
-            ?.filter { it == "name_asc" || it == "name_desc" || it == "density_asc" || it == "density_desc" }
+            ?.filter { it in validSorts }
             ?.distinct()
-            ?.map { Sort.fromString(it) }
+            ?.map(Sort::fromString)
     }
 }
